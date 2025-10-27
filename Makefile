@@ -1,7 +1,7 @@
 out: clean compile execute
 
 compile: main.cpp
-	g++ -g -Wall -std=c++14 main.cpp -o mainexe
+	g++ -g -Wall -std=c++11 main.cpp -o mainexe
 
 execute: mainexe
 	./mainexe

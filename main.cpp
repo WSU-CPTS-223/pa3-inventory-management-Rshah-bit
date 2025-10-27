@@ -1,7 +1,4 @@
-#include <iostream>
-#include <string>
-
-using namespace std;
+#include "inventorylist.hpp"
 
 void printHelp()
 {
