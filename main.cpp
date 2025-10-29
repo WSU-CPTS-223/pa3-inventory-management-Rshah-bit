@@ -1,4 +1,7 @@
 #include "inventorylist.hpp"
+#include <sstream>
+
+InventoryT inv;
 
 void printHelp()
 {
@@ -25,9 +28,14 @@ void evalCommand(string line)
     // if line starts with find
     else if (line.rfind("find", 0) == 0)
     {
-        // Look up the appropriate datastructure to find if the inventory exist
-        cout << "YET TO IMPLEMENT!" << endl;
-    }
+        istringstream iss(line);
+        string cmd, inventoryid;
+        iss >> cmd;
+        if (!(iss >> inventoryid)) {
+            cout << "Usage: find <inventoryid>" << endl;
+        } else{
+            inv.find(inventoryid);
+        } }
     // if line starts with listInventory
     else if (line.rfind("listInventory") == 0)
     {
@@ -42,13 +50,18 @@ void bootStrap()
     cout << " enter :quit to exit. or :help to list supported commands." << endl;
     cout << "\n> ";
     // TODO: Do all your bootstrap operations here
-    // example: reading from CSV and initializing the data structures
-    // Don't dump all code into this single function
-    // use proper programming practices
+
+    ifstream ifile("marketdata.csv");
+    if (!ifile.is_open()) {
+        cerr << "Failed to open marketdata.csv\n";
+    }
+    inv.initList(ifile);
+
 }
 
 int main(int argc, char const *argv[])
-{
+{   
+
     string line;
     bootStrap();
     while (getline(cin, line) && line != ":quit")
