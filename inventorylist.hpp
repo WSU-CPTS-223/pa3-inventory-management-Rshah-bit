@@ -1,4 +1,5 @@
 #include <string>
+#include <cstring>
 #include <iostream>
 #include <fstream>
 #include <unordered_map>
@@ -91,6 +92,19 @@ static inline vector<string> parseCSVLine(const string &line)
     return fields;
 }
 
+static inline string toLowerCopy(const string &s) {
+    string out = s;
+    transform(out.begin(), out.end(), out.begin(), [](unsigned char c){ return std::tolower(c); });
+    return out;
+}
+
+static inline string trim(const string &s) {
+    size_t a = s.find_first_not_of(" \t\r\n");
+    if (a == string::npos) return string();
+    size_t b = s.find_last_not_of(" \t\r\n");
+    return s.substr(a, b - a + 1);
+}
+
 template<typename Key = int,
          typename MapT = unordered_map<Key, inventorylist>>
 class Inventory {
@@ -163,7 +177,30 @@ public:
 
     void listInventory(const string &category)
     {
-
+        string needle = toLowerCopy(trim(category));
+        if (needle.empty()) {
+            cout << "Invalid Category" << endl;
+            return;
+        }
+        int found = 0;
+        for (auto &kv : thelist) {
+            const inventorylist &rec = kv.second;
+            string cats = rec.Category;
+            size_t start = 0;
+            while (start <= cats.size()) {
+                size_t pos = cats.find('|', start);
+                string token = (pos == string::npos) ? cats.substr(start) : cats.substr(start, pos - start);
+                token = toLowerCopy(trim(token));
+                if (!token.empty() && token.find(needle) != string::npos) {
+                    cout << rec.UniqId << "\t" << rec.ProductName << '\n';
+                    ++found;
+                    break;
+                }
+                if (pos == string::npos) break;
+                start = pos + 1;
+            }
+        }
+        if (found == 0) cout << "Invalid Category" << endl;
     }
 
 private:

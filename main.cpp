@@ -21,26 +21,40 @@ bool validCommand(string line)
 
 void evalCommand(string line)
 {
-    if (line == ":help")
-    {
+    if (line == ":help") {
         printHelp();
+        return;
     }
+
     // if line starts with find
-    else if (line.rfind("find", 0) == 0)
-    {
+    if (line.rfind("find", 0) == 0) {
         istringstream iss(line);
         string cmd, inventoryid;
         iss >> cmd;
         if (!(iss >> inventoryid)) {
             cout << "Usage: find <inventoryid>" << endl;
-        } else{
+        } else {
             inv.find(inventoryid);
-        } }
+        }
+        return;
+    }
+
     // if line starts with listInventory
-    else if (line.rfind("listInventory") == 0)
-    {
-        // Look up the appropriate datastructure to find all inventory belonging to a specific category
-        cout << "YET TO IMPLEMENT!" << endl;
+    if (line.rfind("listInventory", 0) == 0) {
+        string category = "";
+        if (line.size() > strlen("listInventory")) {
+            category = line.substr(strlen("listInventory"));
+        }
+        size_t p = category.find_first_not_of(' ');
+        if (p != string::npos) category = category.substr(p);
+        else category.clear();
+
+        if (category.empty()) {
+            cout << "Usage: listInventory <category_string>" << endl;
+        } else {
+            inv.listInventory(category);
+        }
+        return;
     }
 }
 
